@@ -123,6 +123,24 @@ interface IBuyer {
 }
 ```
 
+Задаёт тип запроса на сервер:
+```typescript
+type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
+```
+
+Ограничивает способ оплаты:
+```typescript
+type TPayment = 'online' | 'cash';
+```
+
+Определяет методы для выполнения HTTP-запросов к серверу:
+```typescript
+export interface IApi {
+    get<T extends object>(uri: string): Promise<T>;
+    post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+```
+
 ### Модели данных
 
 Для учёта данных в приложении созданы три класса:
@@ -130,17 +148,18 @@ interface IBuyer {
 #### Класс Сatalog
 Каталог товаров на главной странице. Отвечает за хранение товаров, которые можно купить в приложении;
 
-Конструктор класса не принимает параметров.
+Конструктор:  
+`constructor(products: IProduct[],currentProduct?: IProduct)` - В конструктор передается массив с элементами типа IProduct - товары для отображения на главной странице, и опциональный объект с товаром для отображения в модальном окне.
 
 Поля класса:  
 `products: IProduct[]` - массив всех товаров;
-`currentProduct: IProduct|null` - товар, выбранный для подробного отображения;
+`currentProduct: IProduct|undefined` - товар, выбранный для подробного отображения;
 
 Методы класса:  
 `saveProducts(data: IProduct[]): void` - сохранение массива товаров полученного в параметрах метода;
 `saveCurrentProduct(data: IProduct|null): void` - сохранение товара для подробного отображения;
 `getProducts(): IProduct[]` - получение массива товаров из модели;
-`getCurrentProduct(): IProduct|null` - получение товара для подробного отображения.
+`getCurrentProduct(): IProduct|undefined` - получение товара для подробного отображения.
 `getProductId(id: string): IProduct|null` - получение одного товара по его id;
 
 
@@ -155,7 +174,7 @@ interface IBuyer {
 Методы класса: 
 `getProducts(): IProduct[]` - получение массива товаров, которые находятся в корзине;
 `addProduct(product: IProduct): void` - добавление товара, который был получен в параметре, в массив корзины;
-`addProduct(product: IProduct): void` - удаление товара, полученного в параметре из массива корзины;
+`removeProduct(product: IProduct): void` - удаление товара, полученного в параметре из массива корзины;
 `clean(): void` - очистка корзины;
 `getTotalPrice(): Number` - получение стоимости всех товаров в корзине;
 `getTotalCount(): Number` - получение количества товаров в корзине;
@@ -168,7 +187,7 @@ interface IBuyer {
 Конструктор класса не принимает параметров.
 
 Поля класса:  
-`payment: TPayment;` - вид оплаты;
+`payment: TPayment | null = null;` - вид оплаты;
 `email: string;` - адрес;
 `phone: string;` - телефон;
 `address: string;` - почта.

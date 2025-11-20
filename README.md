@@ -133,13 +133,38 @@ type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 type TPayment = 'online' | 'cash';
 ```
 
-Определяет методы для выполнения HTTP-запросов к серверу:
+Определяет методы для выполнения запросов к серверу:
 ```typescript
 export interface IApi {
     get<T extends object>(uri: string): Promise<T>;
     post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 ```
+
+Описывает ответ сервера на GET-запрос списка товаров
+```typescript
+export interface IProductListResponse {
+    total: number;
+    items: IProduct[];
+}
+```
+
+Описывает данные для отправки заказа на сервер:
+```typescript
+export interface IOrderResult {
+    id: string;
+    total: number;
+}
+```
+
+Описывает ответ сервера на создание заказа:
+```typescript
+export interface IOrderRequest extends IBuyer {
+    total: number;
+    items: string[];
+}
+```
+
 
 ### Модели данных
 
@@ -148,8 +173,7 @@ export interface IApi {
 #### Класс Сatalog
 Каталог товаров на главной странице. Отвечает за хранение товаров, которые можно купить в приложении;
 
-Конструктор:  
-`constructor(products: IProduct[],currentProduct?: IProduct)` - В конструктор передается массив с элементами типа IProduct - товары для отображения на главной странице, и опциональный объект с товаром для отображения в модальном окне.
+Конструктор класса не принимает параметров.
 
 Поля класса:  
 `products: IProduct[]` - массив всех товаров;
@@ -200,3 +224,19 @@ export interface IApi {
 `getBuyerData(): BuyerData | null` - получение всех данных покупателя;
 `clean(): void` - очистка всех данных покупателя;  
 `validate(): { payment?: string; email?: string; phone?: string; address?: string }` - проверка корректности всех данных. Возвращает объект с ошибками валидации. Если поле отсутствует в объекте - ошибок нет. Если поле присутствует - значение содержит текст ошибки.
+
+### Слой коммуникации
+
+#### Класс ProductService
+Отвечает за получение данных с сервера и отправку данных на сервер. При работе будем использовать функциональность класса API.
+
+Конструктор:  
+`constructor(api: IApi)` - В конструктор передается экземляр класса IApi
+
+Поля:
+`api: IApi` - Класс будет использовать композицию с IApi
+
+Методы класса:  
+`getProductList(): Promise<IProduct[]>` - выполняет GET-запрос на эндпоинт `/product/`. Использует метод `get` класса `IApi`, получает объект типа `IProductListResponse`, возвращает массив товаров из свойства `items`.
+
+`createOrder(order: IOrderRequest): Promise<IOrderResult>` - выполняет POST-запрос на эндпоинт `/order/`. Использует метод post класса IApi, передает данные о заказе. Возвращает объект с результатом оформления заказа.

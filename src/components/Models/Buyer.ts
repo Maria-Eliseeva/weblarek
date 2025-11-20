@@ -1,10 +1,4 @@
-interface IBuyer {
-  payment: TPayment;
-  email: string;
-  phone: string;
-  address: string;
-}
-type TPayment = 'online' | 'cash';
+import {IBuyer, TPayment} from '../../types/index';
 
 export class Buyer {
     private payment: TPayment | null = null;

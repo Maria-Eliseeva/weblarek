@@ -1,20 +1,10 @@
-interface IProduct {
-  id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number | null;
-}
+import {IProduct} from '../../types/index';
 
 export class Catalog {
-    protected products: IProduct[];
+    protected products: IProduct[]=[];
     protected currentProduct: IProduct|undefined;
 
-    constructor(products: IProduct[],currentProduct?: IProduct) {
-      this.products=products;
-      this.currentProduct = currentProduct;
-    };
+    constructor() {};
 
     saveProducts(data: IProduct[]): void{
       this.products=data;

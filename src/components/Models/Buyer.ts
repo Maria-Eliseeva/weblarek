@@ -1,4 +1,4 @@
-import {IBuyer, TPayment} from '../../types/index';
+import {IBuyer, TPayment, IvalidateResult} from '../../types/index';
 
 export class Buyer {
     private payment: TPayment | null = null;
@@ -43,8 +43,8 @@ export class Buyer {
         this.address = '';
     }
 
-    validate(): { payment?: string; email?: string; phone?: string; address?: string } {
-        const errors: { payment?: string; email?: string; phone?: string; address?: string } = {};
+    validate(): IvalidateResult {
+        const errors: IvalidateResult = {};
 
         if (!this.payment) {
             errors.payment = 'Не выбран вид оплаты';

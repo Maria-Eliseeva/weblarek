@@ -165,6 +165,16 @@ export interface IOrderRequest extends IBuyer {
 }
 ```
 
+Объекст с описанием ошибок при валидации в классе `Buyer`
+```typescript
+export interface IvalidateResult {
+  payment?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+
+```
 
 ### Модели данных
 

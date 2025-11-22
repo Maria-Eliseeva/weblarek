@@ -3,7 +3,8 @@ import { Basket } from "./components/Models/Bascket";
 import { Buyer } from "./components/Models/Buyer";
 import { ProductService } from "./components/Models/ProductService";
 import { apiProducts } from "./utils/data";
-import { IApi } from "./types";
+import { Api } from './components/base/Api';
+import {API_URL} from './utils/constants';
 
 const catalogModel = new Catalog();
 const basketModel = new Basket();
@@ -55,22 +56,9 @@ console.log("После очистки данных покупателя:", buye
 console.log("Текущий товар после очистки:", catalogModel.getCurrentProduct());
 
 //тест загрузки списка продуктов с сервера
-const Api: IApi = {
-    async get(uri) {
-        const response = await fetch(`https://larek-api.nomoreparties.co/api/weblarek${uri}`);
-        return response.json();
-    },
-    async post(uri, data) {
-        const response = await fetch(`https://larek-api.nomoreparties.co/api/weblarek${uri}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        return response.json();
-    }
-};
+const myApi = new Api(API_URL);
+const productService = new ProductService(myApi);
 
-const productService = new ProductService(Api);
 const products = await productService.getProductList();
 console.log('Загружены товары:', products);
 catalogModel.saveProducts(products);

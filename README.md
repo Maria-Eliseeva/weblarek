@@ -223,7 +223,7 @@ export interface ModalData {
 
 ```typescript
 export interface SuccessData {
-  description: string;
+  description: number;
 }
 ```
 
@@ -239,7 +239,7 @@ export interface CardData {
 Объект для создания экземпляра `CardCatalog`, объект хранит категорию и путь до изображения товара
 
 ```typescript
-export interface CardCatalogData extends Card {
+export interface CardCatalogData extends CardData {
   category: string;
   image: string;
 }
@@ -256,7 +256,7 @@ export interface CardPreviewData extends CardCatalogData {
 Объект для создания экземпляра `CardBasket`, объект хранит индекс товара в корзине
 
 ```typescript
-export interface CardBasketData extends Card {
+export interface CardBasketData extends CardData {
   index: number;
 }
 ```
@@ -341,6 +341,7 @@ export interface IFormData {
 ### Слой коммуникации
 
 #### Класс ProductService
+
 Отвечает за получение данных с сервера и отправку данных на сервер. При работе будем использовать функциональность класса API.
 
 Конструктор:  
@@ -357,10 +358,10 @@ export interface IFormData {
 ### Слой представления (View)
 
 #### Класс Header
+
 Отвечает за шапку сайта
 
-Конструктор:  
-`constructor(data: HeaderData)` - В конструктор передается экземляр класса HeaderData
+Конструктор ничего не принимает
 
 Поля:
 `basketButton: HTMLButtonElement` - запоминаем элемент с корзиной
@@ -370,22 +371,19 @@ export interface IFormData {
 `set counter(value: number)` - меняет отображение счётчика товаров.
 
 #### Класс Gallery
+
 Отвечает за список товаров в каталоге
 
-Конструктор:  
-`constructor(data: GalleryData)` - В конструктор передается экземляр класса GalleryData
-
-Поля:
-`catalogElement: HTMLElement` - элемент в котором будет отображаться список карточек
+Конструктор не принимает аргументов
 
 Методы класса:  
 `set catalog(items: HTMLElement[])` - задаёт переданный массив карточек
 
 #### Класс Modal
+
 Отвечает за обёртку в модальном окне
 
-Конструктор:  
-`constructor(data: ModalData)` - В конструктор передается экземляр класса ModalData
+Конструктор не принимает аргументов
 
 Поля:
 `contentElement: HTMLElement` - элемент, в котором будет отображаться список карточек
@@ -393,35 +391,41 @@ export interface IFormData {
 
 Методы класса:  
 `set content(data: HTMLElement)` - задаёт переданный элемент в модальное окно
+`show()` - добавляет класс modal_active 
+
+`hide()` - удаляет класс modal_active 
 
 #### Класс Success
+
 Отвечает за окно подтверждения
 
-Конструктор:  
-`constructor(data: SuccessData)` - В конструктор передается экземляр класса SuccessData
+Конструктор не принимает аргументов
 
 Поля:
 `descriptionElement: HTMLElement` - элемент, в котором будет отображаться сумма списанных средств
 `closeButton: HTMLButtonElement` - кнопка закрытия модального окна
 
 Методы класса:  
-`set description(value: string)` - задаёт текст-описание с суммой
+`set description(value: number)` - задаёт текст-описание с суммой
 
 #### Класс Card
+
 Родительский класс для карточек
 
 Конструктор:  
-`constructor(data: CardData)` - В конструктор передается экземляр класса CardData
+`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
 
 Поля:
 `titleElement: HTMLElement` - элемент, в котором будет отображаться название товара
 `priceElement: HTMLElement` - элемент, в котором будет отображаться цена товара
+`element: HTMLElement`-сама карточка
 
 Методы класса:  
 `set title(name: string)` - задаёт название товара
 `set price(value: number)` - задаёт цену товара
 
 #### Класс CardCatalog
+
 Наследуется от `Card`. Карточка в каталоге
 
 Конструктор:  
@@ -437,17 +441,29 @@ export interface IFormData {
 `set image(src: string)` - задаёт фото товара
 
 #### Класс CardPreview
-Наследуется от `CardCatalog`. Карточка в модальном окне
+
+Наследуется от `Card`. Карточка в модальном окне
 
 Конструктор:  
 `constructor(data: CardPreviewData)` - В конструктор передается экземляр класса CardPreviewData
 
-Поля:
-`textElement: HTMLImageElement` - элемент, в котором будет отображаться описание товара
-`toBasketButton: HTMLButtonElement` - кнопка добавления товара в корзину
+Поля класса:
 
-Методы класса:  
-`set text(data: string)` - задаёт описание товара
+`categoryElement: HTMLElement` — элемент, в котором отображается категория товара
+
+`imageElement: HTMLImageElement` — элемент, в котором отображается фото товара
+
+`textElement: HTMLElement` — элемент, в котором отображается описание товара
+
+`toBasketButton: HTMLButtonElement` — кнопка добавления товара в корзину
+
+Методы класса:
+
+`set category(name: string)` — задаёт категорию товара
+
+`set image(src: string)` — задаёт изображение товара
+
+`set text(value: string)` — задаёт описание товара
 
 #### Класс CardBasket
 
@@ -467,46 +483,52 @@ export interface IFormData {
 
 Отвечает за корзину товаров
 
-Конструктор:  
-`constructor(data: BasketData)` - В конструктор передается экземляр класса BasketData
+Конструктор не принимает аргументов
 
 Поля:
 `listElement: HTMLElement[]` - массив товаров
 `makeOrderButton: HTMLButtonElement` - кнопка оформления заказа
 `priceElement: HTMLElement` - элемент, где выводится общая стоимость товаров в корзине
 
+
 Методы класса:  
 `set list(list: HTMLElement[])` - задаёт товары
 `set price(value: number)` - задаёт общую стоимость товаров
 
 #### Класс Form
+
 Родительский класс для форм
 
-Конструктор:  
-`constructor(data: IFormData)` - В конструктор передается экземляр класса IFormData
+Конструктор:
+`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
 
 Поля:
-`formElement: HTMLFormElement` - сама форма
 `postButton: HTMLButtonElement` - кнопка отправки формы
 `errorsElement: HTMLElement` - элемент, где выводятся ошибки валидации формы
 Методы класса:  
 `set errors(data: string)` - задаёт ошибки в форме
 
 #### Класс FormOrder
+
 Наследник Form
 
 Конструктор:  
-`constructor()` - ничего не принимает
+`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
+
 Поля:
 `cardButton: HTMLButtonElement` - кнопка выбора оплаты картой
 `cashButton: HTMLButtonElement` - кнопка выбора оплаты наличными
 `addressInput: HTMLInputElement` - ввод адреса доставки
 
+Методы:
+`set payment(type: "card" | "cash")` - выбор одного из способов оплаты
+
 #### Класс FormСontacts
+
 Наследник Form
 
 Конструктор:  
-`constructor()` - ничего не принимает
+`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
 Поля:
 `emailInput: HTMLInputElement` - ввод адреса электронной почты заказчика
 `phoneInput: HTMLInputElement` - ввод адреса номера телефона заказчика

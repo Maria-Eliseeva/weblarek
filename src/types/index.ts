@@ -48,3 +48,46 @@ export interface IvalidateResult {
   phone?: string;
   address?: string;
 }
+
+export interface HeaderData {
+  counter: number;
+}
+
+export interface GalleryData {
+  catalog: HTMLElement[];
+}
+
+export interface ModalData {
+  content: HTMLElement;
+}
+
+export interface SuccessData {
+  description: number;
+}
+
+export interface CardData {
+  title: string;
+  price: number;
+}
+
+export interface CardCatalogData extends CardData {
+  category: string;
+  image: string;
+}
+
+export interface CardPreviewData extends CardCatalogData {
+  text: string;
+}
+
+export interface CardBasketData extends CardData {
+  index: number;
+}
+
+export interface BasketData {
+  list: HTMLElement[];
+  price: number;
+}
+
+export interface IFormData {
+  errors: string;
+}

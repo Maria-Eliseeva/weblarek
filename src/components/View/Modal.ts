@@ -1,11 +1,12 @@
 import { Component } from "../base/Component";
 import { ModalData } from "../../types/index";
+import { EventEmitter } from "../base/Events";
 
 export class Modal extends Component<ModalData> {
   private contentElement: HTMLElement;
   private closeButton: HTMLButtonElement;
 
-  constructor() {
+  constructor(private events: EventEmitter) {
     const container = document.getElementById("modal-container") as HTMLElement;
     super(container);
 
@@ -15,6 +16,13 @@ export class Modal extends Component<ModalData> {
     this.closeButton = this.container.querySelector(
       ".modal__close"
     ) as HTMLButtonElement;
+    this.addEvents();
+  }
+  private addEvents() {
+    this.closeButton.addEventListener(
+      "click",
+      this.events.trigger("modal:close")
+    );
   }
 
   set content(data: HTMLElement) {

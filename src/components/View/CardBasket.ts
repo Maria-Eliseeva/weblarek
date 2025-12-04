@@ -1,17 +1,25 @@
 import { Card } from "./Card";
 import { CardBasketData } from "../../types";
+import { EventEmitter } from "../base/Events";
 
 export class CardBasket extends Card {
   private indexElement: HTMLElement;
   private deleteButton: HTMLButtonElement;
 
-  constructor(data: CardBasketData) {
+  constructor(private events: EventEmitter) {
     super("card-basket");
 
     this.indexElement = this.container.querySelector(".basket__item-index") as HTMLElement;
     this.deleteButton = this.container.querySelector(".basket__item-delete") as HTMLButtonElement;
 
-    this.index = data.index;
+    this.addEvents()
+  }
+
+  private addEvents() {
+    this.deleteButton.addEventListener(
+      "click",
+      this.events.trigger("card:delete", { element: this.container, elemOfClass: this })
+    );
   }
 
   set index(value: number) {

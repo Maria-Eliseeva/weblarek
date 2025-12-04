@@ -1,11 +1,12 @@
 import { Component } from "../base/Component";
 import { HeaderData } from "../../types/index";
+import { EventEmitter } from "../base/Events";
 
 export class Header extends Component<HeaderData> {
   private basketButton: HTMLButtonElement;
   private counterElement: HTMLElement;
 
-  constructor() {
+  constructor(private events: EventEmitter)  {
     const container = document.querySelector(".header") as HTMLElement;
     super(container);
 
@@ -15,6 +16,13 @@ export class Header extends Component<HeaderData> {
     this.counterElement = this.container.querySelector(
       ".header__basket-counter"
     ) as HTMLElement;
+    this.addEvents();
+  }
+  private addEvents() {
+    this.basketButton.addEventListener(
+      "click",
+      this.events.trigger("basket:select")
+    );
   }
   set counter(value: number) {
     if (value < 0) {

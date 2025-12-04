@@ -1,13 +1,14 @@
 import { Card } from "./Card";
 import { CardCatalogData } from "../../types";
 import { categoryMap } from "../../utils/constants";
+import { EventEmitter } from "../base/Events";
 
 export class CardCatalog extends Card {
   protected categoryElement: HTMLElement;
   protected imageElement: HTMLImageElement;
   protected openButton: HTMLButtonElement;
 
-  constructor(data: CardCatalogData) {
+  constructor(private events: EventEmitter) {
     super("card-catalog");
 
     this.categoryElement = this.container.querySelector(
@@ -17,8 +18,16 @@ export class CardCatalog extends Card {
       ".card__image"
     ) as HTMLImageElement;
     this.openButton = this.container as HTMLButtonElement;
+
+    this.addEvents();
   }
 
+  private addEvents() {
+    this.openButton.addEventListener(
+      "click",
+      this.events.trigger("card:select", { element: this.container, elemOfClass: this })
+    );
+  }
   set category(name: string) {
     this.categoryElement.textContent = name;
 

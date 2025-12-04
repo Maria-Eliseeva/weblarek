@@ -1,6 +1,6 @@
 export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 
-export type TPayment = "online" | "cash";
+export type TPayment = "card" | "cash";
 
 export interface IApi {
   get<T extends object>(uri: string): Promise<T>;
@@ -77,6 +77,7 @@ export interface CardCatalogData extends CardData {
 
 export interface CardPreviewData extends CardCatalogData {
   text: string;
+  buttonText: "Недоступно" | "Купить" | "Удалить из корзины";
 }
 
 export interface CardBasketData extends CardData {
@@ -89,5 +90,9 @@ export interface BasketData {
 }
 
 export interface IFormData {
-  errors: string;
+  errors?: string;
+  payment?: TPayment;
+  address?: string;
+  email?: string;
+  phone?:string;
 }

@@ -1,12 +1,13 @@
 import { Component } from "../base/Component";
 import { BasketData } from "../../types/index";
+import { EventEmitter } from "../base/Events";
 
 export class Basket extends Component<BasketData> {
   public listElement: HTMLElement;
   public makeOrderButton: HTMLButtonElement;
   private priceElement: HTMLElement;
 
-  constructor() {
+  constructor(private events: EventEmitter) {
     const template = document.getElementById("basket") as HTMLTemplateElement;
     const root = template.content.firstElementChild as HTMLElement;
     const container = root.cloneNode(true) as HTMLElement;
@@ -22,6 +23,13 @@ export class Basket extends Component<BasketData> {
     this.priceElement = this.container.querySelector(
       ".basket__price"
     ) as HTMLElement;
+    this.addEvents();
+  }
+  private addEvents() {
+    this.makeOrderButton.addEventListener("click", () => {
+      if (this.listElement.children.length === 0) return;
+      this.events.trigger("basket:makeOrder")();
+    });
   }
 
   set list(items: HTMLElement[]) {

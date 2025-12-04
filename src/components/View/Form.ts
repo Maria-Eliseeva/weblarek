@@ -1,11 +1,12 @@
 import { IFormData } from "../../types/index";
 import { Component } from "../base/Component";
+import { EventEmitter } from "../base/Events";
 
 export class Form extends Component<IFormData> {
   public postButton: HTMLButtonElement;
   public errorsElement: HTMLElement;
 
-  constructor(templateId: string) {
+  constructor(protected events: EventEmitter, templateId: string) {
     const template = document.getElementById(templateId) as HTMLTemplateElement;
     const root = template.content.firstElementChild as HTMLElement;
     super(root.cloneNode(true) as HTMLFormElement);

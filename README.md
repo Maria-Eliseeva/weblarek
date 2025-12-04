@@ -141,7 +141,7 @@ type ApiPostMethods = "POST" | "PUT" | "DELETE";
 Ограничивает способ оплаты:
 
 ```typescript
-type TPayment = "online" | "cash";
+type TPayment = "card" | "cash";
 ```
 
 Определяет методы для выполнения запросов к серверу:
@@ -245,11 +245,12 @@ export interface CardCatalogData extends CardData {
 }
 ```
 
-Объект для создания экземпляра `CardPreview`, объект хранит информацию о товаре
+Объект для создания экземпляра `CardPreview`, объект хранит информацию о товаре и текст для кнопки
 
 ```typescript
 export interface CardPreviewData extends CardCatalogData {
   text: string;
+  buttonText: "Недоступно" | "Купить" | "Удалить из корзины";
 }
 ```
 
@@ -274,7 +275,11 @@ export interface BasketData {
 
 ```typescript
 export interface IFormData {
-  errors: string;
+  errors?: string;
+  payment?: TPayment;
+  address?: string;
+  email?: string;
+  phone?:string;
 }
 ```
 
@@ -361,14 +366,16 @@ export interface IFormData {
 
 Отвечает за шапку сайта
 
-Конструктор ничего не принимает
+Конструктор:  
+`constructor(private events: EventEmitter)` - В конструктор передается EventEmitter для обработки событий
 
 Поля:
-`basketButton: HTMLButtonElement` - запоминаем элемент с корзиной
-`counterElement: HTMLElement` - элемент с счётчиком товаров в корзине
+- `private basketButton: HTMLButtonElement` - кнопка корзины в шапке сайта
+- `private counterElement: HTMLElement` - элемент с счётчиком товаров в корзине
 
-Методы класса:  
-`set counter(value: number)` - меняет отображение счётчика товаров.
+Методы класса:
+- `private addEvents()` - добавляет обработчик события на кнопку корзины
+- `set counter(value: number)` - меняет отображение счётчика товаров в корзине. Выбрасывает ошибку при отрицательном значении
 
 #### Класс Gallery
 
@@ -383,17 +390,18 @@ export interface IFormData {
 
 Отвечает за обёртку в модальном окне
 
-Конструктор не принимает аргументов
+Конструктор:  
+`constructor(private events: EventEmitter)` - В конструктор передается EventEmitter для обработки событий
 
 Поля:
-`contentElement: HTMLElement` - элемент, в котором будет отображаться список карточек
-`closeButton: HTMLButtonElement` - кнопка закрытия модального окна
+- `private contentElement: HTMLElement` - элемент, в котором будет отображаться контент модального окна
+- `private closeButton: HTMLButtonElement` - кнопка закрытия модального окна
 
-Методы класса:  
-`set content(data: HTMLElement)` - задаёт переданный элемент в модальное окно
-`show()` - добавляет класс modal_active 
-
-`hide()` - удаляет класс modal_active 
+Методы класса:
+- `private addEvents()` - добавляет обработчик события на кнопку закрытия модального окна
+- `set content(data: HTMLElement)` - задаёт переданный элемент в модальное окно
+- `show()` - добавляет класс modal_active и открывает модальное окно
+- `hide()` - удаляет класс modal_active и закрывает модальное окно
 
 #### Класс Success
 
@@ -412,123 +420,132 @@ export interface IFormData {
 
 Родительский класс для карточек
 
-Конструктор:  
+Конструктор:
 `constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
 
 Поля:
-`titleElement: HTMLElement` - элемент, в котором будет отображаться название товара
-`priceElement: HTMLElement` - элемент, в котором будет отображаться цена товара
-`element: HTMLElement`-сама карточка
+- `titleElement: HTMLElement` - элемент, в котором будет отображаться название товара
+- `priceElement: HTMLElement` - элемент, в котором будет отображаться цена товара
+- `element: HTMLElement` - сама карточка
 
-Методы класса:  
-`set title(name: string)` - задаёт название товара
-`set price(value: number)` - задаёт цену товара
+Методы класса:
+- `set title(name: string)` - задаёт название товара
+- `set price(value: number)` - задаёт цену товара. Если значение равно 0 или null, отображается "Бесценно"
+
+
 
 #### Класс CardCatalog
 
 Наследуется от `Card`. Карточка в каталоге
 
-Конструктор:  
-`constructor(data: CardCatalogData)` - В конструктор передается экземляр класса CardCatalogData
+Конструктор: 
+`constructor(private events: EventEmitter)` - В конструктор передается EventEmitter для обработки событий
 
 Поля:
-`categoryElement: HTMLElement` - элемент, в котором будет отображаться категория товара
-`imageElement: HTMLImageElement` - элемент, в котором будет отображаться фото товара
-`openButton: HTMLButtonElement` - кнопка открытия модального окна с товаром
+- `protected categoryElement: HTMLElement` - элемент, в котором будет отображаться категория товара
+- `protected imageElement: HTMLImageElement` - элемент, в котором будет отображаться фото товара
+- `protected openButton: HTMLButtonElement` - кнопка открытия модального окна с товаром
 
-Методы класса:  
-`set category(name: string)` - задаёт категорию товара
-`set image(src: string)` - задаёт фото товара
+Методы класса:
+- `private addEvents()` - добавляет обработчик события на кнопку открытия карточки товара
+- `set category(name: string)` - задаёт категорию товара 
+- `set image(src: string)` - задаёт фото товара
+- `render(data: Partial<CardCatalogData>): HTMLElement` - перегрузка, чтобы поменять родительский <CardData>
+
 
 #### Класс CardPreview
 
 Наследуется от `Card`. Карточка в модальном окне
 
-Конструктор:  
+Конструктор:
 `constructor(data: CardPreviewData)` - В конструктор передается экземляр класса CardPreviewData
 
 Поля класса:
-
-`categoryElement: HTMLElement` — элемент, в котором отображается категория товара
-
-`imageElement: HTMLImageElement` — элемент, в котором отображается фото товара
-
-`textElement: HTMLElement` — элемент, в котором отображается описание товара
-
-`toBasketButton: HTMLButtonElement` — кнопка добавления товара в корзину
+- `categoryElement: HTMLElement` — элемент, в котором отображается категория товара
+- `imageElement: HTMLImageElement` — элемент, в котором отображается фото товара
+- `textElement: HTMLElement` — элемент, в котором отображается описание товара
+- `toBasketButton: HTMLButtonElement` — кнопка добавления товара в корзину
 
 Методы класса:
-
-`set category(name: string)` — задаёт категорию товара
-
-`set image(src: string)` — задаёт изображение товара
-
-`set text(value: string)` — задаёт описание товара
+- `set category(name: string)` — задаёт категорию товара
+- `set image(src: string)` — задаёт изображение товара
+- `set text(value: string)` — задаёт описание товара
 
 #### Класс CardBasket
 
 Наследуется от `Card`. Карточка в корзине
 
-Конструктор:  
-`constructor(data: CardBasketData)` - В конструктор передается экземляр класса CardBasketData
+Конструктор: 
+`constructor(private events: EventEmitter)` - В конструктор передается экземляр класса EventEmitter для обработки событий
 
 Поля:
-`indexElement: HTMLImageElement` - элемент, в котором будет отображаться порядковый номер товара в корзине
-`deleteButton: HTMLButtonElement` - кнопка удаления товара из корзины
+- `private indexElement: HTMLElement` - элемент, в котором будет отображаться порядковый номер товара в корзине
+- `private deleteButton: HTMLButtonElement` - кнопка удаления товара из корзины
 
-Методы класса:  
-`set index(index: number)` - задаёт индекс товара
+Методы класса: 
+- `set index(value: number)` - задаёт индекс товара в корзине
+- `render(data: Partial<CardBasketData>): HTMLElement` - перегрузка, чтобы поменять родительский <CardData>
 
 #### Класс Basket
 
-Отвечает за корзину товаров
+Отвечает за корзину товаров в интерфейсе.
 
-Конструктор не принимает аргументов
+Конструктор:
+`constructor(events: EventEmitter)` — принимает экземпляр EventEmitter для генерации событий.
 
 Поля:
-`listElement: HTMLElement[]` - массив товаров
-`makeOrderButton: HTMLButtonElement` - кнопка оформления заказа
-`priceElement: HTMLElement` - элемент, где выводится общая стоимость товаров в корзине
+- listElement: HTMLElement — контейнер для списка товаров в DOM
+- makeOrderButton: HTMLButtonElement — кнопка оформления заказа
+- priceElement: HTMLElement — элемент для отображения общей стоимости
 
-
-Методы класса:  
-`set list(list: HTMLElement[])` - задаёт товары
-`set price(value: number)` - задаёт общую стоимость товаров
+Методы и сеттеры:
+- private addEvents(): void — добавляет обработчик клика по кнопке оформления. Генерирует событие "basket:makeOrder" только если корзина не пуста.
+- set list(items: HTMLElement[]): void — заменяет содержимое корзины переданным массивом DOM-элементов
+- set price(value: number): void — задаёт общую стоимость товаров и отображает её в `priceElement` с постфиксом "синапсов"
 
 #### Класс Form
 
 Родительский класс для форм
 
 Конструктор:
-`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
+`constructor(protected events: EventEmitter, templateId: string)` - В конструктор передается EventEmitter для обработки событий и templateId, который будет клонирован
 
 Поля:
-`postButton: HTMLButtonElement` - кнопка отправки формы
-`errorsElement: HTMLElement` - элемент, где выводятся ошибки валидации формы
+- `public postButton: HTMLButtonElement` - кнопка отправки формы
+- `public errorsElement: HTMLElement` - элемент, где выводятся ошибки валидации формы
+
 Методы класса:  
-`set errors(data: string)` - задаёт ошибки в форме
+- `set errors(data: string)` - задаёт ошибки в форме
 
 #### Класс FormOrder
 
-Наследник Form
+Наследник `Form`. Форма оформления заказа
 
 Конструктор:  
-`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
+`constructor(protected events: EventEmitter)` - В конструктор передается EventEmitter для обработки событий
 
 Поля:
-`cardButton: HTMLButtonElement` - кнопка выбора оплаты картой
-`cashButton: HTMLButtonElement` - кнопка выбора оплаты наличными
-`addressInput: HTMLInputElement` - ввод адреса доставки
+- `public cardButton: HTMLButtonElement` - кнопка выбора оплаты картой
+- `public cashButton: HTMLButtonElement` - кнопка выбора оплаты наличными
+- `public addressInput: HTMLInputElement` - ввод адреса доставки
 
 Методы:
-`set payment(type: "card" | "cash")` - выбор одного из способов оплаты
+- `private addEvents()` - добавляет обработчики событий на кнопки оплаты, поле адреса и кнопку отправки
+- `set payment(type: "card" | "cash")` - выбор одного из способов оплаты, активирует соответствующую кнопку
+- `set address(address: string)` - задает адрес доставки
+- `public update(data: Partial<IFormData>)` - обновляет значения полей формы и ошибки
 
-#### Класс FormСontacts
+#### Класс FormContacts
 
-Наследник Form
+Наследник `Form`. Форма контактных данных
 
-Конструктор:  
-`constructor(templateId: string)` - В конструктор передается templateId, который будет клонирован
+Конструктор: 
+`constructor(protected events: EventEmitter)` - В конструктор передается EventEmitter для обработки событий
+
 Поля:
-`emailInput: HTMLInputElement` - ввод адреса электронной почты заказчика
-`phoneInput: HTMLInputElement` - ввод адреса номера телефона заказчика
+- `public emailInput: HTMLInputElement` - ввод адреса электронной почты заказчика
+- `public phoneInput: HTMLInputElement` - ввод номера телефона заказчика
+
+Методы класса:
+- `private addEvents()` - добавляет обработчики событий на поля ввода и кнопку отправки
+- `public update(data: Partial<IFormData>)` - обновляет значения полей формы и ошибки

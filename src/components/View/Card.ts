@@ -24,7 +24,8 @@ export class Card extends Component<CardData>  {
   }
 
   set price(value: number) {
-    this.priceElement.textContent = `${value} синапсов`;
+    if (value) this.priceElement.textContent = `${value} синапсов`;
+    else this.priceElement.textContent = `Бесценно`;
   }
 
 }

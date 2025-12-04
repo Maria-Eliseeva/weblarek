@@ -138,7 +138,7 @@ function createBasket(): HTMLElement {
       basketToProduct.set(cardBasket, item);
       return cardBasket.render({
         title: item.title,
-        index: index,
+        index: index+1,
         price: item.price || 0,
       });
     }),

@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { CardPreviewData } from "../../types";
+import {CDN_URL} from '../../utils/constants'
 import { categoryMap } from "../../utils/constants";
 import { EventEmitter } from "../base/Events";
 
@@ -47,7 +47,7 @@ export class CardPreview extends Card {
   }
 
   set image(src: string) {
-    this.setImage(this.imageElement, src);
+    this.setImage(this.imageElement, CDN_URL + src);
   }
 
   set text(value: string) {

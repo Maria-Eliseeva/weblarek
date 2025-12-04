@@ -1,4 +1,5 @@
 import { Card } from "./Card";
+import {CDN_URL} from '../../utils/constants'
 import { CardCatalogData } from "../../types";
 import { categoryMap } from "../../utils/constants";
 import { EventEmitter } from "../base/Events";
@@ -43,7 +44,7 @@ export class CardCatalog extends Card {
   }
 
   set image(src: string) {
-    this.imageElement.src = src;
+    this.setImage(this.imageElement, CDN_URL + src);
   }
 
   render(data: Partial<CardCatalogData>): HTMLElement {

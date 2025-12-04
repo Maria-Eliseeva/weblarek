@@ -20,9 +20,16 @@ export class Modal extends Component<ModalData> {
   }
   private addEvents() {
     this.closeButton.addEventListener(
-      "click",
-      this.events.trigger("modal:close")
+        "click",()=>
+        this.events.trigger("modal:close")()
     );
+  
+    
+    this.container.addEventListener("click", (e: MouseEvent) => {
+        if (e.target === this.container) {
+            this.events.trigger("modal:close")();
+        }
+    });
   }
 
   set content(data: HTMLElement) {

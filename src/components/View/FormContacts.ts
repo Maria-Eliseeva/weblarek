@@ -33,10 +33,10 @@ export class FormContacts extends Form {
       }
     });
 
-    this.postButton.addEventListener(
-      "click",
-      this.events.trigger("nextform:submit")
-    );
+    this.postButton.addEventListener("click", (e) => {
+      e.preventDefault(); 
+      this.events.trigger("nextform:submit")();
+    });
   }
 
   public update(data: Partial<IFormData>) {

@@ -22,4 +22,14 @@ export class Form extends Component<IFormData> {
   set errors(data: string) {
     this.errorsElement.textContent = data;
   }
+
+  set valid(valid: boolean) {
+    if (valid) {
+      this.postButton.disabled = false;
+      this.postButton.classList.add("button_active");
+    } else {
+      this.postButton.disabled = true;
+      this.postButton.classList.remove("button_active");
+    }
+  }
 }

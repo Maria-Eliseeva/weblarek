@@ -5,6 +5,7 @@ export class Card extends Component<CardData>  {
 
   protected titleElement: HTMLElement;
   protected priceElement: HTMLElement;
+  protected _id: string|undefined;
 
   constructor(templateId: string) {
     const template = document.getElementById(templateId) as HTMLTemplateElement;
@@ -26,6 +27,9 @@ export class Card extends Component<CardData>  {
   set price(value: number) {
     if (value) this.priceElement.textContent = `${value} синапсов`;
     else this.priceElement.textContent = `Бесценно`;
+  }
+  set id(value: string){
+    this._id=value
   }
 
 }

@@ -68,6 +68,7 @@ export interface SuccessData {
 export interface CardData {
   title: string;
   price: number;
+  id: string;
 }
 
 export interface CardCatalogData extends CardData {

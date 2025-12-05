@@ -1,7 +1,8 @@
 import { Card } from "./Card";
-import {CDN_URL} from '../../utils/constants'
+import { CDN_URL } from "../../utils/constants";
 import { categoryMap } from "../../utils/constants";
 import { EventEmitter } from "../base/Events";
+import { CardPreviewData } from "../../types";
 
 export class CardPreview extends Card {
   private categoryElement: HTMLElement;
@@ -27,10 +28,9 @@ export class CardPreview extends Card {
     this.addEvents();
   }
   private addEvents() {
-    this.toBasketButton.addEventListener(
-      "click",
-      this.events.trigger("card:buy", { element: this.container, elemOfClass: this })
-    );
+    this.toBasketButton.addEventListener("click", () => {
+      this.events.trigger("card:buy", { id: this._id })();
+    });
   }
   set category(name: string) {
     this.categoryElement.textContent = name;
@@ -53,14 +53,17 @@ export class CardPreview extends Card {
   set text(value: string) {
     this.textElement.textContent = value;
   }
+
   set toBasket(data: "Недоступно" | "Купить" | "Удалить из корзины") {
-  this.toBasketButton.textContent = data;
-  if (data === "Недоступно") {
-    this.toBasketButton.disabled = true;
-  } else {
-    this.toBasketButton.disabled = false;
+    this.toBasketButton.textContent = data;
+    if (data === "Недоступно") {
+      this.toBasketButton.disabled = true;
+    } else {
+      this.toBasketButton.disabled = false;
+    }
   }
-}
-
-
+  render(data: Partial<CardPreviewData>): HTMLElement {
+    super.render(data);
+    return this.container;
+  }
 }

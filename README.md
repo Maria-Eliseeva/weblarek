@@ -227,12 +227,13 @@ export interface SuccessData {
 }
 ```
 
-Объект для создания экземпляра `Card`, объект хранит название и цену товара
+Объект для создания экземпляра `Card`, объект хранит название, id и цену товара
 
 ```typescript
 export interface CardData {
   title: string;
   price: number;
+  id: string;
 }
 ```
 
@@ -427,12 +428,12 @@ export interface IFormData {
 - `titleElement: HTMLElement` - элемент, в котором будет отображаться название товара
 - `priceElement: HTMLElement` - элемент, в котором будет отображаться цена товара
 - `element: HTMLElement` - сама карточка
+- `_id: string | undefined` - id товара
 
 Методы класса:
 - `set title(name: string)` - задаёт название товара
 - `set price(value: number)` - задаёт цену товара. Если значение равно 0 или null, отображается "Бесценно"
-
-
+- `set id(value: string)` - id товара
 
 #### Класс CardCatalog
 
@@ -467,9 +468,12 @@ export interface IFormData {
 - `toBasketButton: HTMLButtonElement` — кнопка добавления товара в корзину
 
 Методы класса:
+- `private addEvents()` - добавляет обработчик события на кнопку открытия карточки товара
 - `set category(name: string)` — задаёт категорию товара
 - `set image(src: string)` — задаёт изображение товара
 - `set text(value: string)` — задаёт описание товара
+- `set toBasket(data: "Недоступно" | "Купить" | "Удалить из корзины")` - делает кнопку активной/ деактивирует, выводит соответсвующий текст
+- `render(data: Partial<CardPreviewData>): HTMLElement` - перегрузка, чтобы поменять родительский <CardData>
 
 #### Класс CardBasket
 
@@ -483,6 +487,7 @@ export interface IFormData {
 - `private deleteButton: HTMLButtonElement` - кнопка удаления товара из корзины
 
 Методы класса: 
+- `private addEvents()` - добавляет обработчик события на кнопку открытия карточки товара
 - `set index(value: number)` - задаёт индекс товара в корзине
 - `render(data: Partial<CardBasketData>): HTMLElement` - перегрузка, чтобы поменять родительский <CardData>
 
@@ -516,6 +521,7 @@ export interface IFormData {
 
 Методы класса:  
 - `set errors(data: string)` - задаёт ошибки в форме
+- `set valid(valid: boolean)` - управляет состоянием кнопки отправки формы
 
 #### Класс FormOrder
 

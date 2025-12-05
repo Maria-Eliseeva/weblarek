@@ -16,10 +16,9 @@ export class CardBasket extends Card {
   }
 
   private addEvents() {
-    this.deleteButton.addEventListener(
-      "click",
-      this.events.trigger("card:delete", { element: this.container, elemOfClass: this })
-    );
+    this.deleteButton.addEventListener("click", () => {
+      this.events.trigger("card:delete", { id: this._id })();
+    });
   }
 
   set index(value: number) {
@@ -28,7 +27,6 @@ export class CardBasket extends Card {
 
   render(data: Partial<CardBasketData>): HTMLElement {
     super.render(data);
-    this.indexElement.textContent = data.index?.toString() || '0';
     return this.container;
   }
 }

@@ -27,13 +27,18 @@ export class Basket extends Component<BasketData> {
   }
   private addEvents() {
     this.makeOrderButton.addEventListener("click", () => {
-      if (this.listElement.children.length === 0) return;
       this.events.trigger("basket:makeOrder")();
     });
   }
 
   set list(items: HTMLElement[]) {
     this.listElement.replaceChildren(...items);
+    if (items.length === 0) {
+      this.makeOrderButton.disabled=true;
+    }
+    else{
+      this.makeOrderButton.disabled=false;
+    }
   }
 
   set price(value: number) {

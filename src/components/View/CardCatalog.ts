@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import {CDN_URL} from '../../utils/constants'
+import { CDN_URL } from "../../utils/constants";
 import { CardCatalogData } from "../../types";
 import { categoryMap } from "../../utils/constants";
 import { EventEmitter } from "../base/Events";
@@ -24,10 +24,9 @@ export class CardCatalog extends Card {
   }
 
   private addEvents() {
-    this.openButton.addEventListener(
-      "click",
-      this.events.trigger("card:select", { element: this.container, elemOfClass: this })
-    );
+    this.openButton.addEventListener("click", () => {
+      this.events.trigger("card:select", { id: this._id })();
+    });
   }
   set category(name: string) {
     this.categoryElement.textContent = name;
@@ -42,15 +41,12 @@ export class CardCatalog extends Card {
       this.categoryElement.classList.add(modifier);
     }
   }
-
   set image(src: string) {
     this.setImage(this.imageElement, CDN_URL + src);
   }
 
   render(data: Partial<CardCatalogData>): HTMLElement {
     super.render(data);
-    if (data.category) this.category = data.category;
-    if (data.image) this.image = data.image;
     return this.container;
   }
 }
